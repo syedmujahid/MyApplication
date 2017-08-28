@@ -1,0 +1,258 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Servic example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="scriptcode.js"></script>
+    <style>
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid blue;
+            border-bottom: 16px solid blue;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+
+    <div class="container-fluid">
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create Form Modal</button>
+        <!--create form-->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Create Form</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" ng-model="data.name">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" ng-model="data.password">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Id</label>
+                            <input type="email" class="form-control" id="email" ng-model="data.emailid">
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Comment:</label>
+                            <textarea class="form-control" rows="5" id="comment" ng-model="data.comment"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="addr">Address:</label>
+                            <textarea class="form-control" rows="5" id="addr" ng-model="data.address"></textarea>
+                        </div>
+                        <p>Select Course</p>
+                        <div class="checkbox"  ng-repeat="x in course">
+                            <label><input type="checkbox" value="" ng-model="active" ng-change="checkboxValueFun(x,active)">{{x}}</label>
+                        </div>
+                        <p>Gender</p>
+                        <div class="radio" ng-repeat="gend in Gender">
+                            <label><input type="radio" name="male" ng-model="value1">Male</label>
+                            <label><input type="radio" name="female" ng-model="value1">Female</label>
+                        </div>          
+                        <div class="form-group">
+                            <label for="sel1">Select City:</label>
+                            <select ng-model="selectedName" ng-change="selectedBox(selectedName)" ng-options="x for x in cities"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="createOrUpdateFormData(data)">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+            </div>
+        </div>
+                <!--end-->
+
+
+                <div>
+                    <div class="loader" style="position: absolute; margin-top: 153px; margin-left: 470px;" ng-hide="loader"></div>
+
+                    <div class="col-md-6">
+                        <span>form data for post service:{{stdInfoPass|json}}</span>
+                        <div class="form-group">
+                            <label for="text1">Search</label>
+                            <input type="text" class="form-control" ng-model="title" id="text1" placeholder="Search with title">
+                        </div>
+                        {{ContentList|json}}
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <td>operation</td>
+                                    <th >Id</th>
+                                    <th  ng-click="setOrderProperty('title')">title</th>
+                                    <th  ng-click="setOrderProperty('completed')">completed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="x in Info |filter : title |orderBy:orderProperty | limitTo:limit track by $index" ng-init="inituserInfo(Info)" ng-click="currentInfo(x)">
+                                    <td><input type="checkbox" ng-model="active" ng-change="checkboxFunction(x,active)" /></td>
+                                    <td>{{x.id}}</td>
+                                    <td>{{x.title}}</td>
+                                    <td>{{x.completed}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button ng-click="loadmoreRecords()" style="width:auto">Load More</button>
+                    </div>
+                    <div class="col-md-6">
+
+                        <span>Information:{{title1}}</span>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>title</th>
+                                    <th>completed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{title1}}</td>
+                                    <td>{{completed1}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br />
+                        <span style="color:green">Create User/update user</span>
+                        <form action="/action_page.php">
+                            <div class="form-group">
+                                <label for="text">Title:</label>
+                                <input type="text" class="form-control" ng-model="info.title" id="text" placeholder="Enter Title">
+                            </div>
+                            <div class="form-group">
+                                <label for="text1">Completed:</label>
+                                <input type="text" class="form-control" ng-model="info.completed" id="text1" placeholder="Enter Completed">
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="updateInfo(info)">Save</button>
+                        </form>
+
+                        <p>
+                            Data:{{userData|json}}
+                        </p>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <span>_______________________________________________________________________________________________________________________________________________________________________________________</span>
+                <div class="col-md-6">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>name</th>
+                                <th>email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="xx in ProfileData | limitTo:limit track by $index" ng-init="initprofileBody(ProfileData)" ng-click="currentProfileData(xx)">
+                                <td>{{xx.id}}</td>
+                                <td>{{xx.name}}</td>
+                                <td>{{xx.email}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button ng-click="loadmoreRecords1()">Load More</button>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>body</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{id}}</td>
+                                <td>{{body}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <span>_______________________________________________________________________________________________________________________________________________________________________________________</span>
+                <br />
+                <select ng-model="selectedName" ng-options="item for item in names" ng-change="changeValue(selectedName)"></select>
+                <div class="col-md-6">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>avatar</th>
+                                <th>firstname</th>
+                                <th>lastname</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="xxx in pageData" ng-click="currentUser(xxx);">
+                                <td>{{xxx.id}}</td>
+                                <td><img src="{{xxx.avatar}}"</td>
+                                <td>{{xxx.first_name}}</td>
+                                <td>{{xxx.last_name}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>owner</th>
+                                <th>year</th>
+                                <th>pantone_value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="user in InfoUser">
+                                <td>{{user.id}}</td>
+                                <td>{{user.name}}</td>
+                                <td>{{user.year}}</td>
+                                <td>{{user.pantone_value}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+</body>
+</html>
